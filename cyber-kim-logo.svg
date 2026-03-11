@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#0d1b2a"/>
+      <stop offset="100%" style="stop-color:#050d14"/>
+    </radialGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="50%" style="stop-color:#0066cc"/>
+      <stop offset="100%" style="stop-color:#003380"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="textGlow" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="shieldClip">
+      <path d="M250 105 L340 140 L340 230 Q340 295 250 330 Q160 295 160 230 L160 140 Z"/>
+    </clipPath>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.8"/>
+      <stop offset="50%" style="stop-color:#0044aa;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0.8"/>
+    </linearGradient>
+    <linearGradient id="accentLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#00d4ff;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="250" cy="250" r="245" fill="url(#bgGrad)"/>
+  <circle cx="250" cy="250" r="245" fill="none" stroke="#00d4ff" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Outer decorative ring segments -->
+  <g filter="url(#glow)">
+    <path d="M 130 120 A 155 155 0 0 1 370 120" fill="none" stroke="#00d4ff" stroke-width="2" opacity="0.5" stroke-dasharray="8 5"/>
+    <path d="M 130 380 A 155 155 0 0 0 370 380" fill="none" stroke="#00d4ff" stroke-width="2" opacity="0.5" stroke-dasharray="8 5"/>
+  </g>
+
+  <!-- Tick marks -->
+  <g opacity="0.25" stroke="#00d4ff" stroke-width="1.5">
+    <line x1="250" y1="8" x2="250" y2="22"/>
+    <line x1="250" y1="478" x2="250" y2="492"/>
+    <line x1="8" y1="250" x2="22" y2="250"/>
+    <line x1="478" y1="250" x2="492" y2="250"/>
+    <line x1="80" y1="80" x2="90" y2="90"/>
+    <line x1="410" y1="80" x2="420" y2="90"/>
+    <line x1="80" y1="420" x2="90" y2="410"/>
+    <line x1="410" y1="420" x2="420" y2="410"/>
+  </g>
+
+  <!-- Hexagonal background nodes -->
+  <g opacity="0.08" stroke="#00d4ff" stroke-width="1" fill="none">
+    <polygon points="250,40 275,54 275,82 250,96 225,82 225,54"/>
+    <polygon points="50,200 75,214 75,242 50,256 25,242 25,214"/>
+    <polygon points="450,200 475,214 475,242 450,256 425,242 425,214"/>
+    <polygon points="100,370 125,384 125,412 100,426 75,412 75,384"/>
+    <polygon points="400,370 425,384 425,412 400,426 375,412 375,384"/>
+  </g>
+
+  <!-- Circuit lines -->
+  <g opacity="0.15" stroke="#00d4ff" stroke-width="1" fill="none">
+    <polyline points="50,250 90,250 110,230 140,230"/>
+    <polyline points="450,250 410,250 390,270 360,270"/>
+    <polyline points="250,50 250,90 270,110 270,130"/>
+    <circle cx="90" cy="250" r="3" fill="#00d4ff"/>
+    <circle cx="410" cy="250" r="3" fill="#00d4ff"/>
+    <circle cx="250" cy="90" r="3" fill="#00d4ff"/>
+  </g>
+
+  <!-- SHIELD -->
+  <g filter="url(#strongGlow)">
+    <path d="M250 100 L345 137 L345 232 Q345 302 250 338 Q155 302 155 232 L155 137 Z" fill="#00d4ff" opacity="0.08"/>
+    <path d="M250 100 L345 137 L345 232 Q345 302 250 338 Q155 302 155 232 L155 137 Z" fill="none" stroke="url(#shieldGrad)" stroke-width="3"/>
+    <path d="M250 108 L337 143 L337 232 Q337 296 250 330 Q163 296 163 232 L163 143 Z" fill="#0a1628" opacity="0.9"/>
+    <path d="M250 108 L337 143 L337 232 Q337 296 250 330 Q163 296 163 232 L163 143 Z" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+  </g>
+
+  <!-- Lock body -->
+  <g filter="url(#glow)">
+    <path d="M220 205 L220 188 Q220 163 250 163 Q280 163 280 188 L280 205" fill="none" stroke="#00d4ff" stroke-width="6" stroke-linecap="round"/>
+    <rect x="210" y="203" width="80" height="62" rx="8" ry="8" fill="#0d2040" stroke="#00d4ff" stroke-width="2"/>
+    <rect x="210" y="203" width="80" height="62" rx="8" ry="8" fill="#00d4ff" opacity="0.05"/>
+    <circle cx="250" cy="228" r="10" fill="none" stroke="#00d4ff" stroke-width="2"/>
+    <circle cx="250" cy="228" r="4" fill="#00d4ff" opacity="0.8"/>
+    <rect x="247" y="228" width="6" height="14" rx="3" fill="#00d4ff" opacity="0.8"/>
+  </g>
+
+  <!-- Signal arcs -->
+  <g filter="url(#glow)" opacity="0.6">
+    <path d="M235 130 Q250 122 265 130" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+    <path d="M225 123 Q250 111 275 123" fill="none" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- Data dots -->
+  <g filter="url(#glow)" fill="#00d4ff">
+    <circle cx="155" cy="180" r="3" opacity="0.8"/>
+    <circle cx="345" cy="180" r="3" opacity="0.8"/>
+    <circle cx="148" cy="220" r="2" opacity="0.5"/>
+    <circle cx="352" cy="220" r="2" opacity="0.5"/>
+    <circle cx="160" cy="260" r="2" opacity="0.4"/>
+    <circle cx="340" cy="260" r="2" opacity="0.4"/>
+  </g>
+
+  <!-- Accent lines -->
+  <g opacity="0.4">
+    <line x1="60" y1="195" x2="140" y2="195" stroke="url(#accentLine)" stroke-width="1.5"/>
+    <line x1="360" y1="195" x2="440" y2="195" stroke="url(#accentLine)" stroke-width="1.5"/>
+    <line x1="70" y1="205" x2="140" y2="205" stroke="url(#accentLine)" stroke-width="1"/>
+    <line x1="360" y1="205" x2="430" y2="205" stroke="url(#accentLine)" stroke-width="1"/>
+  </g>
+
+  <!-- CYBER KIM text -->
+  <g filter="url(#textGlow)">
+    <text x="250" y="385" font-family="'Arial Black', 'Impact', sans-serif" font-size="52" font-weight="900" fill="#00d4ff" text-anchor="middle" letter-spacing="10">CYBER</text>
+    <text x="250" y="435" font-family="'Arial Black', 'Impact', sans-serif" font-size="46" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="18">KIM</text>
+  </g>
+
+  <!-- Accent line under CYBER -->
+  <line x1="100" y1="392" x2="400" y2="392" stroke="url(#accentLine)" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Tagline -->
+  <text x="250" y="462" font-family="'Arial', sans-serif" font-size="11" fill="#00d4ff" text-anchor="middle" letter-spacing="5" opacity="0.7">CONNEXION SÉCURISÉE</text>
+
+  <!-- Bottom dots -->
+  <g fill="#00d4ff" opacity="0.5">
+    <circle cx="175" cy="474" r="2"/>
+    <circle cx="185" cy="474" r="2"/>
+    <circle cx="195" cy="474" r="2"/>
+    <circle cx="305" cy="474" r="2"/>
+    <circle cx="315" cy="474" r="2"/>
+    <circle cx="325" cy="474" r="2"/>
+  </g>
+
+  <!-- Corner brackets -->
+  <g stroke="#00d4ff" stroke-width="2" fill="none" opacity="0.4">
+    <polyline points="25,45 25,25 45,25"/>
+    <polyline points="455,25 475,25 475,45"/>
+    <polyline points="25,455 25,475 45,475"/>
+    <polyline points="455,475 475,475 475,455"/>
+  </g>
+
+  <!-- Scanning lines -->
+  <line x1="25" y1="250" x2="475" y2="250" stroke="#00d4ff" stroke-width="0.5" opacity="0.08"/>
+  <line x1="250" y1="25" x2="250" y2="475" stroke="#00d4ff" stroke-width="0.5" opacity="0.08"/>
+
+</svg>
