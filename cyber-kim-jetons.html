@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Kim — Gestion Jetons</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --panel: #0f1628;
+    --card: #141d35;
+    --border: #1e2d55;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #7fff6b;
+    --gold: #ffd700;
+    --text: #e0eaff;
+    --muted: #5a6a8a;
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 20%, rgba(0,212,255,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(255,107,53,0.05) 0%, transparent 50%),
+      linear-gradient(180deg, #0a0e1a 0%, #070b14 100%);
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    position: sticky;
+    top: 0;
+    background: rgba(10,14,26,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), #0066ff);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: var(--glow);
+  }
+
+  .logo-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-shadow: var(--glow);
+  }
+
+  .logo-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: -4px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .stat-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-pill span:first-child {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.3rem;
+    color: var(--accent);
+  }
+
+  .stat-pill span:last-child {
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    gap: 0;
+    padding: 1.5rem 2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    padding: 0.75rem 1.5rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* MAIN */
+  main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* GENERATOR */
+  .gen-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+
+  .panel-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .forfait-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .forfait-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+  }
+
+  .forfait-card:hover { border-color: var(--accent); }
+  .forfait-card.selected {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.05);
+    box-shadow: inset 0 0 20px rgba(0,212,255,0.05);
+  }
+
+  .forfait-left { display: flex; align-items: center; gap: 12px; }
+
+  .forfait-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--muted);
+    transition: all 0.2s;
+  }
+
+  .forfait-card.selected .forfait-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .forfait-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .forfait-time {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .forfait-price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--gold);
+  }
+
+  .qty-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+  }
+
+  .qty-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .qty-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .qty-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.3rem;
+    color: var(--accent);
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .ip-row {
+    margin-bottom: 1.5rem;
+  }
+
+  .ip-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .ip-input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+  }
+
+  .ip-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(0,212,255,0.1);
+  }
+
+  .gen-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--accent), #0066ff);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--glow);
+  }
+
+  .gen-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(0,212,255,0.5);
+  }
+
+  .gen-btn:active { transform: translateY(0); }
+
+  /* TICKETS GRID */
+  .tickets-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+  }
+
+  .tickets-actions {
+    display: flex;
+    gap: 0.8rem;
+  }
+
+  .action-btn {
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+  }
+
+  .action-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .action-btn.primary {
+    background: linear-gradient(135deg, var(--accent2), #ff3366);
+    border-color: transparent;
+    color: white;
+  }
+
+  .action-btn.primary:hover {
+    box-shadow: 0 0 20px rgba(255,107,53,0.4);
+    transform: translateY(-1px);
+  }
+
+  .tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .empty-state {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+
+  .empty-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* TICKET CARD */
+  .ticket {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ticket::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .ticket.f15::before { background: linear-gradient(90deg, var(--accent3), #00ff88); }
+  .ticket.f30::before { background: linear-gradient(90deg, var(--accent), #0066ff); }
+  .ticket.f45::before { background: linear-gradient(90deg, var(--accent2), #ff3366); }
+  .ticket.f60::before { background: linear-gradient(90deg, var(--gold), var(--accent2)); }
+  .ticket.f90::before  { background: linear-gradient(90deg, #c084fc, #818cf8); }
+  .ticket.f120::before { background: linear-gradient(90deg, #f472b6, #ec4899); }
+  .ticket.f150::before { background: linear-gradient(90deg, #fb923c, #f97316); }
+  .ticket.f180::before { background: linear-gradient(90deg, #34d399, #10b981); }
+  .ticket.f210::before { background: linear-gradient(90deg, #22d3ee, #06b6d4); }
+  .ticket.f240::before { background: linear-gradient(90deg, #e879f9, #a855f7); }
+
+  .ticket.used {
+    opacity: 0.4;
+    filter: grayscale(0.8);
+  }
+
+  .ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.8rem;
+  }
+
+  .ticket-forfait {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+  }
+
+  .ticket-forfait.f15 { color: var(--accent3); }
+  .ticket-forfait.f30 { color: var(--accent); }
+  .ticket-forfait.f60 { color: var(--gold); }
+
+  .ticket-price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .ticket-qr {
+    display: flex;
+    justify-content: center;
+    margin: 0.6rem 0;
+    background: white;
+    border-radius: 8px;
+    padding: 6px;
+  }
+
+  .ticket-qr canvas, .ticket-qr img {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .ticket-code {
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--text);
+    letter-spacing: 3px;
+    margin-top: 0.5rem;
+  }
+
+  .ticket-id {
+    text-align: center;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  .ticket-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .used-badge {
+    background: rgba(255,50,50,0.2);
+    border: 1px solid rgba(255,50,50,0.4);
+    color: #ff5050;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* PRINT SECTION */
+  .print-config {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* STATS SECTION */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .stat-card:nth-child(1)::after { background: var(--accent); }
+  .stat-card:nth-child(2)::after { background: var(--accent3); }
+  .stat-card:nth-child(3)::after { background: var(--gold); }
+  .stat-card:nth-child(4)::after { background: var(--accent2); }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 2rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .history-table th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .history-table td {
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid rgba(30,45,85,0.5);
+  }
+
+  .history-table tr:hover td { background: rgba(0,212,255,0.02); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .badge-15 { background: rgba(127,255,107,0.15); color: var(--accent3); }
+  .badge-30 { background: rgba(0,212,255,0.15); color: var(--accent); }
+  .badge-45 { background: rgba(255,107,53,0.15); color: var(--accent2); }
+  .badge-60 { background: rgba(255,215,0,0.15); color: var(--gold); }
+  .badge-90  { background: rgba(192,132,252,0.15); color: #c084fc; }
+  .badge-120 { background: rgba(244,114,182,0.15); color: #f472b6; }
+  .badge-150 { background: rgba(251,146,60,0.15);  color: #fb923c; }
+  .badge-180 { background: rgba(52,211,153,0.15);  color: #34d399; }
+  .badge-210 { background: rgba(34,211,238,0.15);  color: #22d3ee; }
+  .badge-240 { background: rgba(232,121,249,0.15); color: #e879f9; }
+  .badge-used { background: rgba(255,80,80,0.15); color: #ff5050; }
+  .badge-free { background: rgba(0,212,255,0.1); color: var(--accent); }
+
+  /* PRINT STYLES */
+  @media print {
+    body { background: white !important; }
+    header, nav, .gen-controls, .tickets-header, .no-print { display: none !important; }
+
+    .tickets-grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 8px !important;
+    }
+
+    .ticket {
+      border: 1px solid #ccc !important;
+      background: white !important;
+      color: black !important;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .ticket-forfait, .ticket-code { color: black !important; }
+    .ticket-price { color: #555 !important; }
+    .ticket-id { color: #999 !important; }
+
+    .print-header {
+      display: block !important;
+      text-align: center;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: black;
+    }
+  }
+
+  .print-header { display: none; }
+
+  /* MIKROTIK EXPORT */
+  .code-block {
+    background: #070b14;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: #7fff6b;
+    overflow-x: auto;
+    line-height: 1.6;
+    margin-top: 1rem;
+    white-space: pre;
+  }
+
+  .copy-btn {
+    margin-top: 0.8rem;
+    padding: 0.5rem 1.2rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { background: rgba(0,212,255,0.1); border-color: var(--accent); }
+
+  .success-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(127,255,107,0.15);
+    border: 1px solid var(--accent3);
+    color: var(--accent3);
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  .success-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  select.ip-input {
+    appearance: none;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🌐</div>
+    <div>
+      <div class="logo-text">CYBER KIM</div>
+      <div class="logo-sub">Gestion des Jetons</div>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-pill">
+      <span id="hdr-total">0</span>
+      <span>Jetons créés</span>
+    </div>
+    <div class="stat-pill">
+      <span id="hdr-used">0</span>
+      <span>Utilisés</span>
+    </div>
+    <div class="stat-pill">
+      <span id="hdr-revenue">0</span>
+      <span>Ar recettes</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <button class="tab active" onclick="switchTab('generator')">🎫 Générateur</button>
+  <button class="tab" onclick="switchTab('jetons')">📋 Mes Jetons</button>
+  <button class="tab" onclick="switchTab('stats')">📊 Statistiques</button>
+  <button class="tab" onclick="switchTab('mikrotik')">⚙️ MikroTik</button>
+</nav>
+
+<main>
+
+  <!-- GENERATOR TAB -->
+  <div id="tab-generator" class="section active">
+    <div class="gen-grid">
+      <div class="panel" style="position:sticky;top:90px;">
+        <div class="panel-title">⚡ Nouveau Lot de Jetons</div>
+
+        <div class="forfait-cards">
+          <div class="forfait-card selected f15" onclick="selectForfait('15min', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:var(--accent3)">⚡ Flash</div>
+                <div class="forfait-time">15 Minutes</div>
+              </div>
+            </div>
+            <div class="forfait-price">500 Ar</div>
+          </div>
+          <div class="forfait-card f30" onclick="selectForfait('30min', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:var(--accent)">🚀 Express</div>
+                <div class="forfait-time">30 Minutes</div>
+              </div>
+            </div>
+            <div class="forfait-price">1 000 Ar</div>
+          </div>
+          <div class="forfait-card f45" onclick="selectForfait('45min', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:var(--accent2)">🟠 Starter</div>
+                <div class="forfait-time">45 Minutes</div>
+              </div>
+            </div>
+            <div class="forfait-price">1 500 Ar</div>
+          </div>
+          <div class="forfait-card f60" onclick="selectForfait('1heure', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:var(--gold)">⭐ Standard</div>
+                <div class="forfait-time">1 Heure</div>
+              </div>
+            </div>
+            <div class="forfait-price">2 000 Ar</div>
+          </div>
+          <div class="forfait-card f90" onclick="selectForfait('1h30', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:#c084fc">💜 Confort</div>
+                <div class="forfait-time">1h30</div>
+              </div>
+            </div>
+            <div class="forfait-price">2 500 Ar</div>
+          </div>
+          <div class="forfait-card f120" onclick="selectForfait('2heure', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:#f472b6">🌸 Plus</div>
+                <div class="forfait-time">2 Heures</div>
+              </div>
+            </div>
+            <div class="forfait-price">3 000 Ar</div>
+          </div>
+          <div class="forfait-card f150" onclick="selectForfait('2h30', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:#fb923c">🔥 Max</div>
+                <div class="forfait-time">2h30</div>
+              </div>
+            </div>
+            <div class="forfait-price">3 500 Ar</div>
+          </div>
+          <div class="forfait-card f180" onclick="selectForfait('3heure', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:#34d399">💎 Premium</div>
+                <div class="forfait-time">3 Heures</div>
+              </div>
+            </div>
+            <div class="forfait-price">4 000 Ar</div>
+          </div>
+          <div class="forfait-card f210" onclick="selectForfait('3h30', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:#22d3ee">🏆 Pro</div>
+                <div class="forfait-time">3h30</div>
+              </div>
+            </div>
+            <div class="forfait-price">4 500 Ar</div>
+          </div>
+          <div class="forfait-card f240" onclick="selectForfait('4heure', this)">
+            <div class="forfait-left">
+              <div class="forfait-dot"></div>
+              <div>
+                <div class="forfait-name" style="color:#e879f9">👑 Ultra</div>
+                <div class="forfait-time">4 Heures</div>
+              </div>
+            </div>
+            <div class="forfait-price">5 000 Ar</div>
+          </div>
+        </div>
+
+        <div class="qty-row">
+          <div class="qty-label">Quantité</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <div class="qty-num" id="qty-display">10</div>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+
+        <div class="ip-row">
+          <div class="ip-label">IP Portail MikroTik</div>
+          <input type="text" class="ip-input" id="portal-ip" value="192.168.17.1" placeholder="192.168.17.1">
+        </div>
+
+        <button class="gen-btn" onclick="generateTickets()">
+          ⚡ Générer les Jetons
+        </button>
+      </div>
+
+      <div>
+        <div class="tickets-header">
+          <div class="panel-title" style="margin:0">Aperçu — <span id="preview-count">0</span> jetons</div>
+          <div class="tickets-actions">
+            <button class="action-btn" onclick="switchTab('jetons')">Voir tous les jetons →</button>
+            <button class="action-btn primary" onclick="printTickets()">🖨️ Imprimer</button>
+          </div>
+        </div>
+        <div class="tickets-grid" id="preview-grid">
+          <div class="empty-state">
+            <div class="empty-icon">🎫</div>
+            <div class="empty-text">Aucun jeton généré</div>
+            <div style="font-size:0.8rem;color:var(--muted);margin-top:0.5rem">Configure et clique sur "Générer"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JETONS TAB -->
+  <div id="tab-jetons" class="section">
+    <div class="tickets-header">
+      <div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;">Tous les Jetons</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;" id="jetons-subtitle">0 jeton</div>
+      </div>
+      <div class="tickets-actions">
+        <button class="action-btn" onclick="filterJetons('all')">Tous</button>
+        <button class="action-btn" onclick="filterJetons('15min')">15 Min</button>
+        <button class="action-btn" onclick="filterJetons('30min')">30 Min</button>
+        <button class="action-btn" onclick="filterJetons('45min')">45 Min</button>
+        <button class="action-btn" onclick="filterJetons('1heure')">1h</button>
+        <button class="action-btn" onclick="filterJetons('1h30')">1h30</button>
+        <button class="action-btn" onclick="filterJetons('2heure')">2h</button>
+        <button class="action-btn" onclick="filterJetons('2h30')">2h30</button>
+        <button class="action-btn" onclick="filterJetons('3heure')">3h</button>
+        <button class="action-btn" onclick="filterJetons('3h30')">3h30</button>
+        <button class="action-btn" onclick="filterJetons('4heure')">4h</button>
+        <button class="action-btn" onclick="filterJetons('free')">Disponibles</button>
+        <button class="action-btn primary" onclick="printTickets()">🖨️ Imprimer tout</button>
+      </div>
+    </div>
+    <div class="tickets-grid" id="all-grid">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-text">Aucun jeton créé</div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:0.5rem">Génère des jetons depuis l'onglet Générateur</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS TAB -->
+  <div id="tab-stats" class="section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Jetons</div>
+        <div class="stat-value" id="st-total">0</div>
+        <div class="stat-sub">créés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Disponibles</div>
+        <div class="stat-value" id="st-free">0</div>
+        <div class="stat-sub">non utilisés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Utilisés</div>
+        <div class="stat-value" id="st-used">0</div>
+        <div class="stat-sub">vendus</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Recettes</div>
+        <div class="stat-value" id="st-revenue">0</div>
+        <div class="stat-sub">Ariary</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">📈 Détail par forfait</div>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Forfait</th>
+            <th>Créés</th>
+            <th>Utilisés</th>
+            <th>Disponibles</th>
+            <th>Recettes</th>
+          </tr>
+        </thead>
+        <tbody id="stats-table">
+          <tr><td colspan="5" style="color:var(--muted);text-align:center;padding:2rem">Aucune donnée</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:1.5rem" class="panel">
+      <div class="panel-title">🕐 Derniers Jetons Utilisés</div>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Forfait</th>
+            <th>Statut</th>
+            <th>Date création</th>
+          </tr>
+        </thead>
+        <tbody id="history-table">
+          <tr><td colspan="5" style="color:var(--muted);text-align:center;padding:2rem">Aucun historique</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MIKROTIK TAB -->
+  <div id="tab-mikrotik" class="section">
+    <div class="panel">
+      <div class="panel-title">⚙️ Script MikroTik — Importer les jetons</div>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem;">
+        Copie ce script dans le terminal MikroTik (Winbox → Terminal) pour créer tous tes jetons directement sur le routeur.
+      </p>
+      <div class="code-block" id="mikrotik-script"># Aucun jeton généré — Génère des jetons d'abord</div>
+      <button class="copy-btn" onclick="copyScript()">📋 Copier le Script</button>
+    </div>
+
+    <div class="panel" style="margin-top:1.5rem">
+      <div class="panel-title">📖 Guide de configuration Hotspot</div>
+      <div style="color:var(--muted);font-size:0.85rem;line-height:1.8;">
+        <p style="margin-bottom:1rem;color:var(--text)"><strong>Étapes pour activer le portail captif :</strong></p>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:0.8rem;background:var(--card);padding:1rem;border-radius:8px;border:1px solid var(--border);line-height:2;">
+<span style="color:var(--accent)"># 1. Ouvre Winbox → IP → Hotspot</span>
+# Clique sur "Hotspot Setup"
+# Sélectionne ton interface (bridge ou ether2)
+# IP locale: 192.168.88.1
+# Clique Next jusqu'à la fin
+
+<span style="color:var(--accent)"># 2. Créer les profils de forfaits</span>
+/ip hotspot user profile add name=15min session-timeout=00:15:00 rate-limit=2M/2M
+/ip hotspot user profile add name=30min session-timeout=00:30:00 rate-limit=2M/2M
+/ip hotspot user profile add name=45min session-timeout=00:45:00 rate-limit=2M/2M
+/ip hotspot user profile add name=1heure session-timeout=01:00:00 rate-limit=2M/2M
+/ip hotspot user profile add name=1h30 session-timeout=01:30:00 rate-limit=2M/2M
+/ip hotspot user profile add name=2heure session-timeout=02:00:00 rate-limit=2M/2M
+/ip hotspot user profile add name=2h30 session-timeout=02:30:00 rate-limit=2M/2M
+/ip hotspot user profile add name=3heure session-timeout=03:00:00 rate-limit=2M/2M
+/ip hotspot user profile add name=3h30 session-timeout=03:30:00 rate-limit=2M/2M
+/ip hotspot user profile add name=4heure session-timeout=04:00:00 rate-limit=2M/2M
+
+<span style="color:var(--accent)"># 3. Colle ensuite le script généré ci-dessus</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- PRINT HEADER -->
+<div class="print-header">CYBER KIM — Jetons Internet</div>
+
+<!-- TOAST -->
+<div class="success-toast" id="toast">✓ Copié !</div>
+
+<script>
+// STATE
+let jetons = JSON.parse(localStorage.getItem('cyberkim_jetons') || '[]');
+let currentForfait = '15min';
+let qty = 10;
+const prices = { '15min': 500, '30min': 1000, '45min': 1500, '1heure': 2000, '1h30': 2500, '2heure': 3000, '2h30': 3500, '3heure': 4000, '3h30': 4500, '4heure': 5000 };
+const durations = { '15min': 'Flash — 15 Min', '30min': 'Express — 30 Min', '45min': 'Starter — 45 Min', '1heure': 'Standard — 1h', '1h30': 'Confort — 1h30', '2heure': 'Plus — 2h', '2h30': 'Max — 2h30', '3heure': 'Premium — 3h', '3h30': 'Pro — 3h30', '4heure': 'Ultra — 4h' };
+const profiles = { '15min': 'f15', '30min': 'f30', '45min': 'f45', '1heure': 'f60', '1h30': 'f90', '2heure': 'f120', '2h30': 'f150', '3heure': 'f180', '3h30': 'f210', '4heure': 'f240' };
+
+function save() {
+  localStorage.setItem('cyberkim_jetons', JSON.stringify(jetons));
+  updateHeader();
+}
+
+function generateCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+function generateTickets() {
+  const ip = document.getElementById('portal-ip').value || '192.168.88.1';
+  const newJetons = [];
+  for (let i = 0; i < qty; i++) {
+    const code = generateCode();
+    const id = currentForfait + '-' + Date.now() + '-' + i;
+    newJetons.push({
+      id, code, forfait: currentForfait,
+      price: prices[currentForfait],
+      url: `http://${ip}/login?username=${id}&password=${code}`,
+      used: false,
+      createdAt: new Date().toLocaleDateString('fr-FR')
+    });
+  }
+  jetons = [...newJetons, ...jetons];
+  save();
+  renderPreview(newJetons);
+  document.getElementById('preview-count').textContent = newJetons.length;
+  updateMikrotikScript();
+  showToast(`✓ ${qty} jetons générés !`);
+}
+
+function renderTicket(j) {
+  const div = document.createElement('div');
+  div.className = `ticket ${profiles[j.forfait]}${j.used ? ' used' : ''}`;
+  div.innerHTML = `
+    <div class="ticket-header">
+      <div class="ticket-forfait ${profiles[j.forfait]}">${durations[j.forfait]}</div>
+      <div class="ticket-price">${j.price.toLocaleString()} Ar</div>
+    </div>
+    ${j.used ? '<div class="ticket-status"><span class="used-badge">Utilisé</span></div>' : ''}
+    <div class="ticket-qr" id="qr-${j.id.replace(/[^a-z0-9]/gi,'')}"></div>
+    <div class="ticket-code">${j.code}</div>
+    <div class="ticket-id">CYBER KIM</div>
+  `;
+  setTimeout(() => {
+    const qrEl = div.querySelector(`#qr-${j.id.replace(/[^a-z0-9]/gi,'')}`);
+    if (qrEl && typeof QRCode !== 'undefined') {
+      new QRCode(qrEl, {
+        text: j.url,
+        width: 100, height: 100,
+        colorDark: '#000000', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+  }, 50);
+  return div;
+}
+
+function renderPreview(list) {
+  const grid = document.getElementById('preview-grid');
+  grid.innerHTML = '';
+  list.forEach(j => grid.appendChild(renderTicket(j)));
+}
+
+function renderAll(list) {
+  const grid = document.getElementById('all-grid');
+  grid.innerHTML = '';
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Aucun jeton</div></div>`;
+    return;
+  }
+  list.forEach(j => grid.appendChild(renderTicket(j)));
+  document.getElementById('jetons-subtitle').textContent = `${list.length} jeton${list.length>1?'s':''}`;
+}
+
+function filterJetons(type) {
+  let filtered = jetons;
+  if (type !== 'all') {
+    if (type === 'free') filtered = jetons.filter(j => !j.used);
+    else filtered = jetons.filter(j => j.forfait === type);
+  }
+  renderAll(filtered);
+}
+
+function updateHeader() {
+  const total = jetons.length;
+  const used = jetons.filter(j => j.used).length;
+  const revenue = jetons.filter(j => j.used).reduce((s, j) => s + j.price, 0);
+  document.getElementById('hdr-total').textContent = total;
+  document.getElementById('hdr-used').textContent = used;
+  document.getElementById('hdr-revenue').textContent = revenue.toLocaleString();
+}
+
+function updateStats() {
+  const total = jetons.length;
+  const used = jetons.filter(j => j.used).length;
+  const revenue = jetons.filter(j => j.used).reduce((s, j) => s + j.price, 0);
+  document.getElementById('st-total').textContent = total;
+  document.getElementById('st-free').textContent = total - used;
+  document.getElementById('st-used').textContent = used;
+  document.getElementById('st-revenue').textContent = revenue.toLocaleString();
+
+  // Detail table
+  const tbody = document.getElementById('stats-table');
+  if (!total) { tbody.innerHTML = `<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:2rem">Aucune donnée</td></tr>`; return; }
+
+  const rows = ['15min','30min','45min','1heure','1h30','2heure','2h30','3heure','3h30','4heure'].map(f => {
+    const fJetons = jetons.filter(j => j.forfait === f);
+    const fUsed = fJetons.filter(j => j.used).length;
+    const fRev = fJetons.filter(j => j.used).reduce((s,j) => s+j.price, 0);
+    if (!fJetons.length) return '';
+    const cls = f === '15min' ? 'badge-15' : f === '30min' ? 'badge-30' : f === '45min' ? 'badge-45' : f === '1heure' ? 'badge-60' : f === '1h30' ? 'badge-90' : f === '2heure' ? 'badge-120' : f === '2h30' ? 'badge-150' : f === '3heure' ? 'badge-180' : f === '3h30' ? 'badge-210' : 'badge-240';
+    return `<tr>
+      <td><span class="badge ${cls}">${durations[f]}</span></td>
+      <td>${fJetons.length}</td>
+      <td>${fUsed}</td>
+      <td>${fJetons.length - fUsed}</td>
+      <td style="font-family:'Share Tech Mono',monospace;color:var(--gold)">${fRev.toLocaleString()} Ar</td>
+    </tr>`;
+  }).join('');
+  tbody.innerHTML = rows || `<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:2rem">Aucune donnée</td></tr>`;
+
+  // History
+  const histBody = document.getElementById('history-table');
+  const last = [...jetons].slice(0, 20);
+  if (!last.length) { histBody.innerHTML = `<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:2rem">Aucun historique</td></tr>`; return; }
+  histBody.innerHTML = last.map(j => {
+    const cls = j.forfait === '15min' ? 'badge-15' : j.forfait === '30min' ? 'badge-30' : j.forfait === '45min' ? 'badge-45' : j.forfait === '1heure' ? 'badge-60' : j.forfait === '1h30' ? 'badge-90' : j.forfait === '2heure' ? 'badge-120' : j.forfait === '2h30' ? 'badge-150' : j.forfait === '3heure' ? 'badge-180' : j.forfait === '3h30' ? 'badge-210' : 'badge-240';
+    return `<tr>
+      <td style="font-size:0.7rem;color:var(--muted)">${j.id.split('-')[0]}</td>
+      <td style="font-family:'Share Tech Mono',monospace;letter-spacing:2px">${j.code}</td>
+      <td><span class="badge ${cls}">${durations[j.forfait]}</span></td>
+      <td><span class="badge ${j.used ? 'badge-used' : 'badge-free'}">${j.used ? 'Utilisé' : 'Disponible'}</span></td>
+      <td style="color:var(--muted)">${j.createdAt}</td>
+    </tr>`;
+  }).join('');
+}
+
+function updateMikrotikScript() {
+  const lines = ['# Script MikroTik — CYBER KIM', '# Copie et colle dans Winbox > Terminal', ''];
+  jetons.forEach(j => {
+    lines.push(`/ip hotspot user add name="${j.id}" password="${j.code}" profile=${j.forfait} comment="${j.price}ar"`);
+  });
+  document.getElementById('mikrotik-script').textContent = lines.join('\n');
+}
+
+function copyScript() {
+  const text = document.getElementById('mikrotik-script').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('✓ Script copié !'));
+}
+
+function selectForfait(f, el) {
+  currentForfait = f;
+  document.querySelectorAll('.forfait-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(100, qty + delta));
+  document.getElementById('qty-display').textContent = qty;
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'jetons') renderAll(jetons);
+  if (name === 'stats') updateStats();
+  if (name === 'mikrotik') updateMikrotikScript();
+}
+
+function printTickets() {
+  window.print();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// INIT
+updateHeader();
+updateMikrotikScript();
+</script>
+</body>
+</html>
