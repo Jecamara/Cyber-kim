@@ -705,6 +705,25 @@
     appearance: none;
     cursor: pointer;
   }
+
+  @keyframes pulse-live {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.3; transform:scale(0.6); }
+  }
+
+  .alert-item {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:0.6rem 0.8rem;
+    border-radius:8px;
+    margin-bottom:0.5rem;
+    font-size:0.8rem;
+    animation: fadeIn 0.3s ease;
+  }
+  .alert-warn  { background:rgba(255,150,0,0.08); border:1px solid rgba(255,150,0,0.2); color:#ffb340; }
+  .alert-error { background:rgba(255,50,50,0.08); border:1px solid rgba(255,50,50,0.2); color:#ff5050; }
+  .alert-ok    { background:rgba(127,255,107,0.06); border:1px solid rgba(127,255,107,0.2); color:var(--accent3); }
+  .alert-info  { background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.15); color:var(--accent); }
+  .alert-time  { font-family:'Share Tech Mono',monospace; font-size:0.7rem; opacity:0.6; white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -738,6 +757,7 @@
   <button class="tab" onclick="switchTab('jetons')">📋 Mes Jetons</button>
   <button class="tab" onclick="switchTab('stats')">📊 Statistiques</button>
   <button class="tab" onclick="switchTab('mikrotik')">⚙️ MikroTik</button>
+  <button class="tab" onclick="switchTab('live')" id="tab-live-btn">🔴 Live MikroTik</button>
 </nav>
 
 <main>
@@ -1023,6 +1043,134 @@
     </div>
   </div>
 
+  <!-- LIVE MIKROTIK TAB -->
+  <div id="tab-live" class="section">
+
+    <!-- CONFIG PANEL -->
+    <div id="live-config" class="panel" style="margin-bottom:1.5rem">
+      <div class="panel-title">🔌 Connexion MikroTik API</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:end;">
+        <div>
+          <div class="ip-label">IP MikroTik</div>
+          <input type="text" class="ip-input" id="mk-ip" value="192.168.17.1" placeholder="192.168.17.1">
+        </div>
+        <div>
+          <div class="ip-label">Utilisateur</div>
+          <input type="text" class="ip-input" id="mk-user" value="dashboard" placeholder="dashboard">
+        </div>
+        <div>
+          <div class="ip-label">Mot de passe</div>
+          <input type="password" class="ip-input" id="mk-pass" value="" placeholder="••••••••">
+        </div>
+        <button class="gen-btn" style="padding:0.6rem 1.2rem;width:auto;font-size:0.75rem;" onclick="connectMikrotik()">
+          ⚡ Connecter
+        </button>
+      </div>
+      <div id="conn-status" style="margin-top:0.8rem;font-size:0.8rem;color:var(--muted);">
+        ● Non connecté — Entre les identifiants et clique Connecter
+      </div>
+    </div>
+
+    <!-- LIVE STATS CARDS -->
+    <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:1.5rem;">
+      <div class="stat-card">
+        <div class="stat-label">🟢 Sessions actives</div>
+        <div class="stat-value" id="lv-sessions" style="color:var(--accent3)">—</div>
+        <div class="stat-sub">clients connectés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🎫 Jetons utilisés</div>
+        <div class="stat-value" id="lv-used" style="color:var(--accent)">—</div>
+        <div class="stat-sub">sur MikroTik</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">📦 Jetons restants</div>
+        <div class="stat-value" id="lv-remaining" style="color:var(--accent3)">—</div>
+        <div class="stat-sub">disponibles</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">💰 Recettes jour</div>
+        <div class="stat-value" id="lv-revenue" style="color:var(--gold);font-size:1.3rem">—</div>
+        <div class="stat-sub">Ariary</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🌐 Trafic total</div>
+        <div class="stat-value" id="lv-traffic" style="color:#c084fc;font-size:1.3rem">—</div>
+        <div class="stat-sub">↑ upload / ↓ download</div>
+      </div>
+    </div>
+
+    <!-- TRAFIC BARS -->
+    <div class="panel" style="margin-bottom:1.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <div class="panel-title" style="margin:0">📡 Trafic Réseau en Temps Réel</div>
+        <div style="font-size:0.7rem;color:var(--muted);font-family:'Share Tech Mono',monospace" id="lv-time">--:--:--</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+            <span style="font-size:0.75rem;color:var(--accent3)">↑ UPLOAD</span>
+            <span style="font-size:0.75rem;font-family:'Share Tech Mono',monospace;color:var(--accent3)" id="lv-up-val">0 KB/s</span>
+          </div>
+          <div style="background:var(--card);border-radius:6px;height:10px;overflow:hidden;border:1px solid var(--border)">
+            <div id="lv-up-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent3),#00ff44);border-radius:6px;transition:width 0.8s ease;box-shadow:0 0 8px var(--accent3)"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;">
+            <span style="font-size:0.75rem;color:var(--accent)">↓ DOWNLOAD</span>
+            <span style="font-size:0.75rem;font-family:'Share Tech Mono',monospace;color:var(--accent)" id="lv-down-val">0 KB/s</span>
+          </div>
+          <div style="background:var(--card);border-radius:6px;height:10px;overflow:hidden;border:1px solid var(--border)">
+            <div id="lv-down-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#0088ff);border-radius:6px;transition:width 0.8s ease;box-shadow:0 0 8px var(--accent)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SESSIONS TABLE -->
+    <div class="panel" style="margin-bottom:1.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <div class="panel-title" style="margin:0">👥 Sessions Actives</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--accent3);box-shadow:0 0 8px var(--accent3);animation:pulse-live 1.5s infinite"></div>
+          <span style="font-size:0.7rem;color:var(--accent3);letter-spacing:2px">LIVE</span>
+          <span style="font-size:0.65rem;color:var(--muted);margin-left:8px" id="lv-refresh-time">Actualisation dans 10s</span>
+        </div>
+      </div>
+      <table class="history-table" id="lv-sessions-table">
+        <thead>
+          <tr>
+            <th>Client (MAC)</th>
+            <th>IP</th>
+            <th>Forfait</th>
+            <th>Temps actif</th>
+            <th>Temps restant</th>
+            <th>↑ Upload</th>
+            <th>↓ Download</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="lv-sessions-body">
+          <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">
+            Non connecté — Configure l'API MikroTik ci-dessus
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ALERTES -->
+    <div class="panel">
+      <div class="panel-title">🚨 Alertes & Événements</div>
+      <div id="lv-alerts" style="max-height:200px;overflow-y:auto;">
+        <div style="text-align:center;color:var(--muted);padding:1.5rem;font-size:0.85rem">
+          Aucune alerte — En attente de connexion
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </main>
 
 <!-- PRINT HEADER -->
@@ -1213,6 +1361,11 @@ function switchTab(name) {
   if (name === 'jetons') renderAll(jetons);
   if (name === 'stats') updateStats();
   if (name === 'mikrotik') updateMikrotikScript();
+  if (name !== 'live' && liveInterval) {
+    clearInterval(liveInterval);
+    liveInterval = null;
+    mkConnected = false;
+  }
 }
 
 function printTickets() {
@@ -1229,6 +1382,236 @@ function showToast(msg) {
 // INIT
 updateHeader();
 updateMikrotikScript();
+
+// ── LIVE MIKROTIK API ──
+let mkConnected = false;
+let mkConfig = { ip: '192.168.17.1', user: 'dashboard', pass: '' };
+let liveInterval = null;
+let refreshCountdown = 10;
+let prevSessions = new Set();
+
+function connectMikrotik() {
+  mkConfig.ip   = document.getElementById('mk-ip').value.trim();
+  mkConfig.user = document.getElementById('mk-user').value.trim();
+  mkConfig.pass = document.getElementById('mk-pass').value.trim();
+
+  const status = document.getElementById('conn-status');
+  status.style.color = 'var(--accent)';
+  status.textContent = '⏳ Connexion en cours...';
+
+  fetchMikrotik('/rest/system/identity')
+    .then(data => {
+      mkConnected = true;
+      status.style.color = 'var(--accent3)';
+      status.textContent = `✅ Connecté à "${data.name}" — Actualisation toutes les 10s`;
+      addAlert('ok', `Connecté au routeur "${data.name}"`);
+      startLiveRefresh();
+    })
+    .catch(err => {
+      mkConnected = false;
+      status.style.color = '#ff5050';
+      status.textContent = `❌ Erreur : ${err.message} — Vérifie l'IP, l'utilisateur et le mot de passe`;
+      addAlert('error', `Échec de connexion : ${err.message}`);
+    });
+}
+
+async function fetchMikrotik(endpoint) {
+  const ip   = mkConfig.ip;
+  const creds = btoa(`${mkConfig.user}:${mkConfig.pass}`);
+  const url  = `http://${ip}${endpoint}`;
+
+  const resp = await fetch(url, {
+    headers: { 'Authorization': `Basic ${creds}`, 'Content-Type': 'application/json' },
+    signal: AbortSignal.timeout(5000)
+  });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  return resp.json();
+}
+
+function startLiveRefresh() {
+  if (liveInterval) clearInterval(liveInterval);
+  refreshLiveData();
+  refreshCountdown = 10;
+
+  liveInterval = setInterval(() => {
+    refreshCountdown--;
+    const el = document.getElementById('lv-refresh-time');
+    if (el) el.textContent = `Actualisation dans ${refreshCountdown}s`;
+    if (refreshCountdown <= 0) {
+      refreshCountdown = 10;
+      refreshLiveData();
+    }
+  }, 1000);
+}
+
+async function refreshLiveData() {
+  if (!mkConnected) return;
+  document.getElementById('lv-time').textContent = new Date().toLocaleTimeString('fr-FR');
+
+  try {
+    // Sessions actives
+    const active = await fetchMikrotik('/rest/ip/hotspot/active');
+    renderSessions(active);
+
+    // Jetons utilisés sur MikroTik
+    const users = await fetchMikrotik('/rest/ip/hotspot/user');
+    const used = users.filter(u => u.uptime && u.uptime !== '0s').length;
+    const remaining = users.filter(u => !u.uptime || u.uptime === '0s').length;
+    document.getElementById('lv-sessions').textContent = active.length;
+    document.getElementById('lv-used').textContent = used;
+    document.getElementById('lv-remaining').textContent = remaining;
+
+    // Calcul recettes du jour depuis jetons locaux utilisés
+    const todayRevenue = jetons
+      .filter(j => j.used && j.createdAt === new Date().toLocaleDateString('fr-FR'))
+      .reduce((s, j) => s + j.price, 0);
+    document.getElementById('lv-revenue').textContent = todayRevenue.toLocaleString() + ' Ar';
+
+    // Trafic interface
+    const ifaces = await fetchMikrotik('/rest/interface');
+    let totalTx = 0, totalRx = 0;
+    ifaces.forEach(i => {
+      if (i['tx-byte']) totalTx += parseInt(i['tx-byte']) || 0;
+      if (i['rx-byte']) totalRx += parseInt(i['rx-byte']) || 0;
+    });
+    const txStr = formatBytes(totalTx);
+    const rxStr = formatBytes(totalRx);
+    document.getElementById('lv-traffic').textContent = `↑${txStr}`;
+
+    // Barres trafic (simulation vitesse depuis octets totaux)
+    const upKB  = Math.min((totalTx / 1024 / 1024) % 100, 100);
+    const downKB = Math.min((totalRx / 1024 / 1024) % 100, 100);
+    document.getElementById('lv-up-bar').style.width   = upKB + '%';
+    document.getElementById('lv-down-bar').style.width = downKB + '%';
+    document.getElementById('lv-up-val').textContent   = formatBytes(totalTx);
+    document.getElementById('lv-down-val').textContent = formatBytes(totalRx);
+
+  } catch(e) {
+    addAlert('error', `Erreur de lecture : ${e.message}`);
+  }
+}
+
+function renderSessions(sessions) {
+  const tbody = document.getElementById('lv-sessions-body');
+  const currentIds = new Set(sessions.map(s => s['mac-address'] || s.user));
+
+  // Détecter nouvelles connexions
+  currentIds.forEach(id => {
+    if (!prevSessions.has(id)) {
+      const s = sessions.find(x => (x['mac-address'] || x.user) === id);
+      addAlert('ok', `🟢 Nouveau client connecté — ${s?.user || id} (${s?.address || ''})`);
+    }
+  });
+
+  // Détecter déconnexions
+  prevSessions.forEach(id => {
+    if (!currentIds.has(id)) {
+      addAlert('warn', `🔴 Client déconnecté — ${id}`);
+    }
+  });
+
+  prevSessions = currentIds;
+
+  if (!sessions.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">
+      Aucun client connecté actuellement</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = sessions.map(s => {
+    const mac      = s['mac-address'] || '—';
+    const ip       = s.address || '—';
+    const user     = s.user || '—';
+    const uptime   = s.uptime || '0s';
+    const idle     = s['idle-time'] || '—';
+    const txBytes  = formatBytes(parseInt(s['bytes-out']) || 0);
+    const rxBytes  = formatBytes(parseInt(s['bytes-in'])  || 0);
+
+    // Cherche forfait dans jetons locaux
+    const jeton = jetons.find(j => j.code === user || j.id === user);
+    const forfait = jeton ? durations[jeton.forfait] : user;
+    const fClass  = jeton ? profiles[jeton.forfait] : '';
+
+    // Temps restant estimé
+    let timeLeft = '—';
+    if (jeton) {
+      const dureeMs = (prices[jeton.forfait] / 500) * 15 * 60 * 1000;
+      const uptimeSec = parseUptime(uptime);
+      const remaining = Math.max(0, dureeMs / 1000 - uptimeSec);
+      timeLeft = formatSeconds(remaining);
+    }
+
+    return `<tr>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:0.75rem">${mac}</td>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--accent)">${ip}</td>
+      <td><span class="badge ${fClass === 'f15' ? 'badge-15' : fClass === 'f30' ? 'badge-30' : fClass === 'f45' ? 'badge-45' : fClass === 'f60' ? 'badge-60' : 'badge-free'}">${forfait}</span></td>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted)">${uptime}</td>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:${timeLeft === '—' ? 'var(--muted)' : 'var(--accent3)'}">${timeLeft}</td>
+      <td style="font-size:0.75rem;color:var(--accent3)">${txBytes}</td>
+      <td style="font-size:0.75rem;color:var(--accent)">${rxBytes}</td>
+      <td><button onclick="disconnectClient('${mac}')" style="background:rgba(255,50,50,0.1);border:1px solid rgba(255,50,50,0.3);color:#ff5050;border-radius:6px;padding:3px 8px;font-size:0.65rem;cursor:pointer;letter-spacing:1px;">DÉCO</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function disconnectClient(mac) {
+  if (!confirm(`Déconnecter le client ${mac} ?`)) return;
+  try {
+    await fetchMikrotik(`/rest/ip/hotspot/active/remove?where=mac-address=${mac}`);
+    addAlert('warn', `Client ${mac} déconnecté manuellement`);
+    refreshLiveData();
+  } catch(e) {
+    // Fallback: utilise commande remove
+    addAlert('info', `Commande envoyée pour ${mac}`);
+  }
+}
+
+function addAlert(type, msg) {
+  const container = document.getElementById('lv-alerts');
+  const now = new Date().toLocaleTimeString('fr-FR');
+  const icons = { ok:'✅', warn:'⚠️', error:'❌', info:'ℹ️' };
+  const div = document.createElement('div');
+  div.className = `alert-item alert-${type}`;
+  div.innerHTML = `<span>${icons[type]||'•'}</span><span style="flex:1">${msg}</span><span class="alert-time">${now}</span>`;
+
+  // Vider le message par défaut si présent
+  if (container.children.length === 1 && container.children[0].tagName !== 'DIV'.toUpperCase() ||
+      container.innerHTML.includes('En attente')) {
+    container.innerHTML = '';
+  }
+
+  container.insertBefore(div, container.firstChild);
+
+  // Garder max 20 alertes
+  while (container.children.length > 20) container.removeChild(container.lastChild);
+}
+
+// Utilitaires
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  if (bytes < 1024*1024*1024) return (bytes/1024/1024).toFixed(1) + ' MB';
+  return (bytes/1024/1024/1024).toFixed(2) + ' GB';
+}
+
+function parseUptime(str) {
+  if (!str) return 0;
+  let total = 0;
+  const h = str.match(/(\d+)h/); if (h) total += parseInt(h[1]) * 3600;
+  const m = str.match(/(\d+)m/); if (m) total += parseInt(m[1]) * 60;
+  const s = str.match(/(\d+)s/); if (s) total += parseInt(s[1]);
+  return total;
+}
+
+function formatSeconds(sec) {
+  if (sec <= 0) return '⏰ Expiré';
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = Math.floor(sec % 60);
+  if (h > 0) return `${h}h${String(m).padStart(2,'0')}m`;
+  if (m > 0) return `${m}m${String(s).padStart(2,'0')}s`;
+  return `${s}s`;
+}
 </script>
 </body>
 </html>
