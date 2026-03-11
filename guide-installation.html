@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Guide Installation — Portail Captif Cyber Kim</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#020810; --cyan:#00d4ff; --green:#00ff88; --panel:rgba(4,16,28,0.95); --border:rgba(0,212,255,0.2); --text:#c8e6f0; --muted:#4a6a7a; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Exo 2',sans-serif; padding:2rem; line-height:1.7; }
+  h1 { font-family:'Orbitron',sans-serif; color:var(--cyan); font-size:1.4rem; letter-spacing:4px; margin-bottom:0.3rem; }
+  h2 { font-family:'Orbitron',sans-serif; color:var(--cyan); font-size:0.85rem; letter-spacing:3px; margin:2rem 0 1rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem; }
+  h3 { color:var(--cyan); font-size:0.8rem; letter-spacing:2px; margin:1rem 0 0.5rem; }
+  .sub { color:var(--muted); font-size:0.75rem; letter-spacing:2px; margin-bottom:2rem; }
+  .step { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.5rem; margin-bottom:1rem; position:relative; }
+  .step-num { position:absolute; top:-10px; left:16px; background:var(--cyan); color:#000; font-family:'Orbitron',sans-serif; font-size:0.6rem; font-weight:700; padding:2px 10px; border-radius:4px; letter-spacing:2px; }
+  .code { background:#010a14; border:1px solid rgba(0,212,255,0.15); border-radius:8px; padding:1rem 1.2rem; font-family:'Share Tech Mono',monospace; font-size:0.8rem; color:var(--green); line-height:1.8; margin:0.8rem 0; overflow-x:auto; white-space:pre; }
+  .comment { color:var(--muted); }
+  .cmd { color:var(--cyan); }
+  .val { color:#ffd700; }
+  p { margin-bottom:0.6rem; font-size:0.88rem; }
+  .note { background:rgba(0,212,255,0.05); border-left:3px solid var(--cyan); padding:0.8rem 1rem; border-radius:0 8px 8px 0; font-size:0.82rem; margin:1rem 0; }
+  .warn { background:rgba(255,150,0,0.05); border-left:3px solid #ff9600; padding:0.8rem 1rem; border-radius:0 8px 8px 0; font-size:0.82rem; margin:1rem 0; color:#ffb340; }
+  .path { font-family:'Share Tech Mono',monospace; background:rgba(0,212,255,0.08); padding:2px 8px; border-radius:4px; font-size:0.8rem; color:var(--cyan); }
+  ul { padding-left:1.2rem; font-size:0.85rem; }
+  ul li { margin-bottom:0.3rem; }
+</style>
+</head>
+<body>
+
+<h1>⚙️ GUIDE INSTALLATION</h1>
+<div class="sub">PORTAIL CAPTIF CYBER KIM — MIKROTIK HAP AC2</div>
+
+<h2>ÉTAPE 1 — Configurer les profils Hotspot</h2>
+<div class="step">
+  <div class="step-num">TERMINAL MIKROTIK</div>
+  <p>Ouvre <strong>Winbox → Terminal</strong> et colle ces commandes :</p>
+  <div class="code"><span class="comment"># ── Créer les profils de durée ──</span>
+<span class="cmd">/ip hotspot user profile</span>
+<span class="val">add</span> name=<span class="val">"Flash"</span>   session-timeout=00:15:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Express"</span> session-timeout=00:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Starter"</span> session-timeout=00:45:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Standard"</span> session-timeout=01:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Confort"</span> session-timeout=01:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Plus"</span>    session-timeout=02:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Max"</span>     session-timeout=02:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Premium"</span> session-timeout=03:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Pro"</span>     session-timeout=03:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Ultra"</span>   session-timeout=04:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span></div>
+
+  <div class="code"><span class="comment"># ── Activer la persistance des sessions (anti-coupure) ──</span>
+<span class="cmd">/ip hotspot profile</span> set [find] keepalive-timeout=<span class="val">00:02:00</span>
+<span class="cmd">/ip hotspot</span> set [find] idle-timeout=<span class="val">00:05:00</span></div>
+</div>
+
+<h2>ÉTAPE 2 — Uploader le portail personnalisé</h2>
+<div class="step">
+  <div class="step-num">FICHIERS À UPLOADER</div>
+  <p>Le portail MikroTik lit ses fichiers HTML depuis :</p>
+  <div class="note">📁 <span class="path">flash/hotspot/</span> sur le routeur</div>
+
+  <h3>2.1 — Via Winbox (méthode simple)</h3>
+  <ul>
+    <li>Ouvre <strong>Winbox → Files</strong></li>
+    <li>Navigue dans le dossier <span class="path">hotspot</span></li>
+    <li>Glisse-dépose le fichier <span class="path">login.html</span></li>
+    <li>Glisse-dépose le fichier <span class="path">cyber-kim-logo.svg</span></li>
+  </ul>
+
+  <h3>2.2 — Via FTP (méthode alternative)</h3>
+  <div class="code"><span class="comment"># Depuis ton PC, dans le terminal Windows (CMD) :</span>
+ftp <span class="val">192.168.17.1</span>
+<span class="comment"># Login: admin / Mot de passe: (ton mot de passe MikroTik)</span>
+cd flash/hotspot
+put login.html
+put cyber-kim-logo.svg
+bye</div>
+</div>
+
+<h2>ÉTAPE 3 — Configurer le profil Hotspot par défaut</h2>
+<div class="step">
+  <div class="step-num">WINBOX → IP → HOTSPOT → SERVER PROFILES</div>
+  <div class="code"><span class="comment"># Dans le terminal MikroTik :</span>
+<span class="cmd">/ip hotspot profile</span> set [find] login-by=<span class="val">http-chap</span> \
+  html-directory=<span class="val">hotspot</span> \
+  http-cookie-lifetime=<span class="val">3d</span> \
+  use-radius=<span class="val">no</span></div>
+
+  <div class="note">✅ <strong>login-by=http-chap</strong> : authentification sécurisée par formulaire HTML</div>
+</div>
+
+<h2>ÉTAPE 4 — Nommer le WiFi (SSID)</h2>
+<div class="step">
+  <div class="step-num">WINBOX → WIRELESS</div>
+  <div class="code"><span class="comment"># Renommer le réseau WiFi :</span>
+<span class="cmd">/interface wireless</span> set [find] ssid=<span class="val">"CYBER KIM"</span>
+
+<span class="comment"># Optionnel : WiFi séparé pour les clients (bridge)</span>
+<span class="cmd">/interface wireless</span> set wlan1 ssid=<span class="val">"CYBER KIM - WiFi"</span></div>
+</div>
+
+<h2>ÉTAPE 5 — Vérification finale</h2>
+<div class="step">
+  <div class="step-num">CHECKLIST</div>
+  <ul>
+    <li>☐ Hotspot actif sur l'interface correcte (bridge/ether2)</li>
+    <li>☐ Fichiers <span class="path">login.html</span> et <span class="path">cyber-kim-logo.svg</span> dans <span class="path">flash/hotspot/</span></li>
+    <li>☐ Profils de durée créés (Flash, Express, Starter...)</li>
+    <li>☐ Jetons générés via l'app Cyber Kim</li>
+    <li>☐ Test depuis un téléphone : se connecter au WiFi "CYBER KIM"</li>
+    <li>☐ Le portail s'ouvre automatiquement dans le navigateur</li>
+    <li>☐ Entrer un code jeton → connexion réussie</li>
+  </ul>
+
+  <div class="warn">⚠️ Si le portail ne s'affiche pas, assure-toi que le DNS est bien configuré sur 192.168.17.1 dans les paramètres Hotspot.</div>
+</div>
+
+<h2>DÉPANNAGE</h2>
+<div class="step">
+  <div class="step-num">PROBLÈMES FRÉQUENTS</div>
+  <div class="code"><span class="comment"># Vérifier que le hotspot tourne :</span>
+<span class="cmd">/ip hotspot</span> print
+
+<span class="comment"># Voir les sessions actives :</span>
+<span class="cmd">/ip hotspot active</span> print
+
+<span class="comment"># Voir les jetons disponibles :</span>
+<span class="cmd">/ip hotspot user</span> print where profile~<span class="val">"Flash"</span>
+
+<span class="comment"># Redémarrer le hotspot :</span>
+<span class="cmd">/ip hotspot</span> disable [find]
+<span class="cmd">/ip hotspot</span> enable [find]</div>
+</div>
+
+</body>
+</html>
