@@ -2,82 +2,134 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guide Installation — Portail Captif Cyber Kim</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#020810; --cyan:#00d4ff; --green:#00ff88; --panel:rgba(4,16,28,0.95); --border:rgba(0,212,255,0.2); --text:#c8e6f0; --muted:#4a6a7a; }
+  :root { --bg:#020810; --cyan:#00d4ff; --green:#00ff88; --gold:#ffd700; --panel:rgba(4,16,28,0.95); --border:rgba(0,212,255,0.2); --text:#c8e6f0; --muted:#4a6a7a; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Exo 2',sans-serif; padding:2rem; line-height:1.7; }
+  body { background:var(--bg); color:var(--text); font-family:'Exo 2',sans-serif; padding:2rem; line-height:1.7; max-width:960px; margin:0 auto; }
   h1 { font-family:'Orbitron',sans-serif; color:var(--cyan); font-size:1.4rem; letter-spacing:4px; margin-bottom:0.3rem; }
-  h2 { font-family:'Orbitron',sans-serif; color:var(--cyan); font-size:0.85rem; letter-spacing:3px; margin:2rem 0 1rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem; }
-  h3 { color:var(--cyan); font-size:0.8rem; letter-spacing:2px; margin:1rem 0 0.5rem; }
+  h2 { font-family:'Orbitron',sans-serif; color:var(--cyan); font-size:0.85rem; letter-spacing:3px; margin:2.5rem 0 1rem; border-bottom:1px solid var(--border); padding-bottom:0.5rem; }
+  h3 { color:var(--cyan); font-size:0.8rem; letter-spacing:2px; margin:1.2rem 0 0.5rem; opacity:0.8; }
   .sub { color:var(--muted); font-size:0.75rem; letter-spacing:2px; margin-bottom:2rem; }
-  .step { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.5rem; margin-bottom:1rem; position:relative; }
-  .step-num { position:absolute; top:-10px; left:16px; background:var(--cyan); color:#000; font-family:'Orbitron',sans-serif; font-size:0.6rem; font-weight:700; padding:2px 10px; border-radius:4px; letter-spacing:2px; }
-  .code { background:#010a14; border:1px solid rgba(0,212,255,0.15); border-radius:8px; padding:1rem 1.2rem; font-family:'Share Tech Mono',monospace; font-size:0.8rem; color:var(--green); line-height:1.8; margin:0.8rem 0; overflow-x:auto; white-space:pre; }
+  .step { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:1.4rem 1.6rem; margin-bottom:1.2rem; position:relative; }
+  .step-num { position:absolute; top:-11px; left:16px; background:var(--cyan); color:#000; font-family:'Orbitron',sans-serif; font-size:0.6rem; font-weight:700; padding:3px 12px; border-radius:4px; letter-spacing:2px; }
+  .step-num.green { background:var(--green); }
+  .step-num.gold  { background:var(--gold); }
+  .code { background:#010a14; border:1px solid rgba(0,212,255,0.15); border-radius:8px; padding:1rem 1.2rem; font-family:'Share Tech Mono',monospace; font-size:0.8rem; color:var(--green); line-height:1.9; margin:0.8rem 0; overflow-x:auto; white-space:pre; }
   .comment { color:var(--muted); }
   .cmd { color:var(--cyan); }
-  .val { color:#ffd700; }
+  .val { color:var(--gold); }
   p { margin-bottom:0.6rem; font-size:0.88rem; }
   .note { background:rgba(0,212,255,0.05); border-left:3px solid var(--cyan); padding:0.8rem 1rem; border-radius:0 8px 8px 0; font-size:0.82rem; margin:1rem 0; }
+  .note-green { background:rgba(0,255,136,0.05); border-left:3px solid var(--green); padding:0.8rem 1rem; border-radius:0 8px 8px 0; font-size:0.82rem; margin:1rem 0; color:#a0ffcc; }
   .warn { background:rgba(255,150,0,0.05); border-left:3px solid #ff9600; padding:0.8rem 1rem; border-radius:0 8px 8px 0; font-size:0.82rem; margin:1rem 0; color:#ffb340; }
   .path { font-family:'Share Tech Mono',monospace; background:rgba(0,212,255,0.08); padding:2px 8px; border-radius:4px; font-size:0.8rem; color:var(--cyan); }
   ul { padding-left:1.2rem; font-size:0.85rem; }
-  ul li { margin-bottom:0.3rem; }
+  ul li { margin-bottom:0.4rem; }
+  .badge-new { display:inline-block; background:rgba(0,255,136,0.15); border:1px solid var(--green); color:var(--green); font-size:0.6rem; padding:1px 8px; border-radius:4px; letter-spacing:2px; margin-left:8px; vertical-align:middle; font-family:'Orbitron',sans-serif; }
+  .toc { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.6rem; margin-bottom:2rem; }
+  .toc-title { font-family:'Orbitron',sans-serif; font-size:0.7rem; letter-spacing:3px; color:var(--muted); margin-bottom:0.8rem; }
+  .toc a { color:var(--cyan); text-decoration:none; font-size:0.82rem; display:block; padding:2px 0; opacity:0.8; transition:opacity 0.2s; }
+  .toc a:hover { opacity:1; }
+  .toc-num { color:var(--muted); margin-right:8px; font-family:'Share Tech Mono',monospace; font-size:0.75rem; }
+  .arch { background:#010a14; border:1px solid rgba(0,212,255,0.15); border-radius:8px; padding:1rem 1.2rem; font-family:'Share Tech Mono',monospace; font-size:0.78rem; color:var(--cyan); line-height:2; margin:0.8rem 0; }
+  .arch .dim { color:var(--muted); }
+  .arch .hi  { color:var(--green); }
 </style>
 </head>
 <body>
 
-<h1>⚙️ GUIDE INSTALLATION</h1>
-<div class="sub">PORTAIL CAPTIF CYBER KIM — MIKROTIK HAP AC2</div>
+<h1>⚙️ GUIDE INSTALLATION COMPLET</h1>
+<div class="sub">CYBER KIM — MIKROTIK HAP AC2 + PORTAIL CAPTIF + DASHBOARD LIVE</div>
 
-<h2>ÉTAPE 1 — Configurer les profils Hotspot</h2>
+<!-- TABLE DES MATIÈRES -->
+<div class="toc">
+  <div class="toc-title">📋 TABLE DES MATIÈRES</div>
+  <a href="#step1"><span class="toc-num">01</span> Configurer les profils Hotspot</a>
+  <a href="#step2"><span class="toc-num">02</span> Uploader le portail captif personnalisé</a>
+  <a href="#step3"><span class="toc-num">03</span> Configurer le profil Hotspot par défaut</a>
+  <a href="#step4"><span class="toc-num">04</span> Nommer le WiFi (SSID)</a>
+  <a href="#step5"><span class="toc-num">05</span> Activer l'API REST MikroTik (Dashboard Live) ✨ NOUVEAU</a>
+  <a href="#step6"><span class="toc-num">06</span> Utiliser le Dashboard Live en temps réel ✨ NOUVEAU</a>
+  <a href="#step7"><span class="toc-num">07</span> Vérification finale — Checklist</a>
+  <a href="#step8"><span class="toc-num">08</span> Dépannage</a>
+</div>
+
+<!-- ARCHITECTURE -->
+<div class="step" style="margin-bottom:2rem">
+  <div class="step-num">ARCHITECTURE GLOBALE</div>
+  <div class="arch">
+<span class="hi">Starlink</span> → <span class="hi">MikroTik HAP AC2</span> (192.168.17.1)
+         │
+         ├── <span class="hi">Portail Captif</span>  (login.html dans flash/hotspot/)
+         │       └── Client scan QR → entre code → internet activé
+         │
+         ├── <span class="hi">API REST</span>  (port 80) ← activé à l'étape 5
+         │       └── Dashboard Live interroge toutes les 10s
+         │
+         └── <span class="hi">App Cyber Kim</span>  (cyber-kim-jetons.html sur PC gérant)
+                 ├── Onglet Générateur  → crée les jetons + QR codes
+                 ├── Onglet Statistiques → revenus, historique
+                 ├── Onglet MikroTik   → script d'import
+                 └── Onglet 🔴 Live    → sessions temps réel <span class="hi">← NOUVEAU</span>
+  </div>
+</div>
+
+<!-- ÉTAPE 1 -->
+<h2 id="step1">ÉTAPE 1 — Configurer les profils Hotspot</h2>
 <div class="step">
   <div class="step-num">TERMINAL MIKROTIK</div>
   <p>Ouvre <strong>Winbox → Terminal</strong> et colle ces commandes :</p>
-  <div class="code"><span class="comment"># ── Créer les profils de durée ──</span>
+  <div class="code"><span class="comment"># ── Créer les 10 profils de forfaits Cyber Kim ──</span>
 <span class="cmd">/ip hotspot user profile</span>
-<span class="val">add</span> name=<span class="val">"Flash"</span>   session-timeout=00:15:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Express"</span> session-timeout=00:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Starter"</span> session-timeout=00:45:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Flash"</span>    session-timeout=00:15:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Express"</span>  session-timeout=00:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Starter"</span>  session-timeout=00:45:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
 <span class="val">add</span> name=<span class="val">"Standard"</span> session-timeout=01:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Confort"</span> session-timeout=01:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Plus"</span>    session-timeout=02:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Max"</span>     session-timeout=02:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Premium"</span> session-timeout=03:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Pro"</span>     session-timeout=03:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
-<span class="val">add</span> name=<span class="val">"Ultra"</span>   session-timeout=04:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span></div>
+<span class="val">add</span> name=<span class="val">"Confort"</span>  session-timeout=01:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Plus"</span>     session-timeout=02:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Max"</span>      session-timeout=02:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Premium"</span>  session-timeout=03:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Pro"</span>      session-timeout=03:30:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span>
+<span class="val">add</span> name=<span class="val">"Ultra"</span>    session-timeout=04:00:00 rate-limit=<span class="val">"2M/2M"</span> shared-users=<span class="val">1</span></div>
 
-  <div class="code"><span class="comment"># ── Activer la persistance des sessions (anti-coupure) ──</span>
+  <div class="code"><span class="comment"># ── Persistance des sessions (protection anti-coupure courant) ──</span>
 <span class="cmd">/ip hotspot profile</span> set [find] keepalive-timeout=<span class="val">00:02:00</span>
 <span class="cmd">/ip hotspot</span> set [find] idle-timeout=<span class="val">00:05:00</span></div>
+  <div class="note-green">✅ L'onduleur branché sur le MikroTik protège contre les micro-coupures. Ces paramètres permettent une reconnexion automatique si le client perd brièvement le signal.</div>
 </div>
 
-<h2>ÉTAPE 2 — Uploader le portail personnalisé</h2>
+<!-- ÉTAPE 2 -->
+<h2 id="step2">ÉTAPE 2 — Uploader le portail captif personnalisé</h2>
 <div class="step">
   <div class="step-num">FICHIERS À UPLOADER</div>
   <p>Le portail MikroTik lit ses fichiers HTML depuis :</p>
-  <div class="note">📁 <span class="path">flash/hotspot/</span> sur le routeur</div>
+  <div class="note">📁 <span class="path">flash/hotspot/</span> sur le routeur MikroTik</div>
 
-  <h3>2.1 — Via Winbox (méthode simple)</h3>
+  <h3>2.1 — Via Winbox (méthode recommandée)</h3>
   <ul>
     <li>Ouvre <strong>Winbox → Files</strong></li>
-    <li>Navigue dans le dossier <span class="path">hotspot</span></li>
-    <li>Glisse-dépose le fichier <span class="path">login.html</span></li>
-    <li>Glisse-dépose le fichier <span class="path">cyber-kim-logo.svg</span></li>
+    <li>Double-clique sur le dossier <span class="path">hotspot</span></li>
+    <li>Glisse-dépose <span class="path">login.html</span></li>
+    <li>Glisse-dépose <span class="path">cyber-kim-logo.svg</span></li>
+    <li>Vérifie que les deux fichiers apparaissent dans la liste</li>
   </ul>
 
-  <h3>2.2 — Via FTP (méthode alternative)</h3>
-  <div class="code"><span class="comment"># Depuis ton PC, dans le terminal Windows (CMD) :</span>
+  <h3>2.2 — Via FTP (alternative)</h3>
+  <div class="code"><span class="comment"># Depuis ton PC Windows — Ouvre CMD et tape :</span>
 ftp <span class="val">192.168.17.1</span>
-<span class="comment"># Login: admin / Mot de passe: (ton mot de passe MikroTik)</span>
+<span class="comment"># Utilisateur : admin</span>
+<span class="comment"># Mot de passe : (ton mot de passe MikroTik)</span>
 cd flash/hotspot
 put login.html
 put cyber-kim-logo.svg
 bye</div>
 </div>
 
-<h2>ÉTAPE 3 — Configurer le profil Hotspot par défaut</h2>
+<!-- ÉTAPE 3 -->
+<h2 id="step3">ÉTAPE 3 — Configurer le profil Hotspot</h2>
 <div class="step">
   <div class="step-num">WINBOX → IP → HOTSPOT → SERVER PROFILES</div>
   <div class="code"><span class="comment"># Dans le terminal MikroTik :</span>
@@ -85,39 +137,127 @@ bye</div>
   html-directory=<span class="val">hotspot</span> \
   http-cookie-lifetime=<span class="val">3d</span> \
   use-radius=<span class="val">no</span></div>
-
-  <div class="note">✅ <strong>login-by=http-chap</strong> : authentification sécurisée par formulaire HTML</div>
+  <div class="note">✅ <strong>login-by=http-chap</strong> : authentification sécurisée via le formulaire HTML personnalisé Cyber Kim.</div>
 </div>
 
-<h2>ÉTAPE 4 — Nommer le WiFi (SSID)</h2>
+<!-- ÉTAPE 4 -->
+<h2 id="step4">ÉTAPE 4 — Nommer le WiFi (SSID)</h2>
 <div class="step">
   <div class="step-num">WINBOX → WIRELESS</div>
-  <div class="code"><span class="comment"># Renommer le réseau WiFi :</span>
+  <div class="code"><span class="comment"># Renommer le réseau WiFi visible par les clients :</span>
 <span class="cmd">/interface wireless</span> set [find] ssid=<span class="val">"CYBER KIM"</span>
 
-<span class="comment"># Optionnel : WiFi séparé pour les clients (bridge)</span>
+<span class="comment"># Optionnel : réseau séparé pour les postes internes :</span>
 <span class="cmd">/interface wireless</span> set wlan1 ssid=<span class="val">"CYBER KIM - WiFi"</span></div>
 </div>
 
-<h2>ÉTAPE 5 — Vérification finale</h2>
+<!-- ÉTAPE 5 - NOUVEAU -->
+<h2 id="step5">ÉTAPE 5 — Activer l'API REST MikroTik <span class="badge-new">NOUVEAU</span></h2>
 <div class="step">
-  <div class="step-num">CHECKLIST</div>
+  <div class="step-num green">DASHBOARD LIVE — PRÉREQUIS</div>
+  <p>L'onglet <strong>🔴 Live MikroTik</strong> de l'app Cyber Kim interroge directement le routeur via l'API REST. Voici comment l'activer :</p>
+
+  <h3>5.1 — Activer le service web (API REST)</h3>
+  <div class="code"><span class="comment"># Activer le service HTTP sur port 80</span>
+<span class="cmd">/ip service</span> enable www
+<span class="cmd">/ip service</span> set www port=<span class="val">80</span>
+
+<span class="comment"># Activer l'API sur port 8728 (optionnel, pour outils tiers)</span>
+<span class="cmd">/ip service</span> enable api
+<span class="cmd">/ip service</span> set api port=<span class="val">8728</span></div>
+
+  <h3>5.2 — Créer un utilisateur dédié (lecture seule)</h3>
+  <div class="code"><span class="comment"># Créer le compte "dashboard" en lecture seule (sécurité)</span>
+<span class="cmd">/user</span> add name=<span class="val">dashboard</span> password=<span class="val">CyberKim2025!</span> group=<span class="val">read</span>
+
+<span class="comment"># Vérifier que l'utilisateur est créé :</span>
+<span class="cmd">/user</span> print</div>
+
+  <h3>5.3 — Autoriser l'accès depuis le PC gérant uniquement</h3>
+  <div class="code"><span class="comment"># Remplace 192.168.17.X par l'IP fixe du PC gérant</span>
+<span class="cmd">/ip service</span> set www address=<span class="val">192.168.17.0/24</span>
+
+<span class="comment"># Vérifier que l'API répond — depuis le navigateur du PC :</span>
+<span class="comment"># http://192.168.17.1/rest/system/identity</span>
+<span class="comment"># → Doit retourner : {"name":"MikroTik"}</span></div>
+
+  <h3>5.4 — Activer CORS (pour que l'app puisse interroger l'API)</h3>
+  <div class="code"><span class="comment"># Autoriser les requêtes depuis le navigateur local</span>
+<span class="cmd">/ip service</span> set www-ssl certificate=<span class="val">none</span>
+
+<span class="comment"># Si le navigateur bloque (erreur CORS), utilise cette URL</span>
+<span class="comment"># dans l'app à la place de 192.168.17.1 :</span>
+<span class="comment"># http://192.168.17.1/rest/ip/hotspot/active</span></div>
+
+  <div class="warn">⚠️ <strong>Si tu vois une erreur CORS dans le navigateur</strong> : c'est une limitation de sécurité du navigateur. Solution : ouvre l'app Cyber Kim depuis <span class="path">file:///</span> (fichier local) ou utilise Firefox qui est plus permissif avec les requêtes locales.</div>
+
+  <div class="note-green">✅ <strong>Test rapide</strong> : depuis le PC gérant, ouvre ce lien dans Firefox : <span class="path">http://192.168.17.1/rest/ip/hotspot/active</span> — si tu vois du JSON, l'API fonctionne !</div>
+</div>
+
+<!-- ÉTAPE 6 - NOUVEAU -->
+<h2 id="step6">ÉTAPE 6 — Utiliser le Dashboard Live <span class="badge-new">NOUVEAU</span></h2>
+<div class="step">
+  <div class="step-num green">APP CYBER KIM → ONGLET 🔴 LIVE</div>
+
+  <h3>6.1 — Ouvrir l'app</h3>
+  <ul>
+    <li>Ouvre <span class="path">cyber-kim-jetons.html</span> dans <strong>Firefox</strong> (recommandé)</li>
+    <li>Clique sur l'onglet <strong>🔴 Live MikroTik</strong></li>
+  </ul>
+
+  <h3>6.2 — Configurer la connexion</h3>
+  <ul>
+    <li><strong>IP MikroTik</strong> : <span class="path">192.168.17.1</span></li>
+    <li><strong>Utilisateur</strong> : <span class="path">dashboard</span></li>
+    <li><strong>Mot de passe</strong> : celui défini à l'étape 5.2</li>
+    <li>Clique <strong>⚡ Connecter</strong></li>
+  </ul>
+
+  <h3>6.3 — Ce que tu vois en temps réel</h3>
+  <ul>
+    <li>🟢 <strong>Sessions actives</strong> — nombre de clients connectés en ce moment</li>
+    <li>🎫 <strong>Jetons utilisés / restants</strong> — état des comptes sur MikroTik</li>
+    <li>💰 <strong>Recettes du jour</strong> — calculées depuis les jetons locaux</li>
+    <li>🌐 <strong>Trafic réseau</strong> — upload / download avec barres animées</li>
+    <li>👥 <strong>Tableau des sessions</strong> — MAC, IP, forfait, temps restant, données consommées</li>
+    <li>🚨 <strong>Alertes automatiques</strong> — connexions, déconnexions, erreurs</li>
+  </ul>
+
+  <div class="note">🔄 Le dashboard s'actualise automatiquement <strong>toutes les 10 secondes</strong> sans intervention.</div>
+
+  <h3>6.4 — Déconnecter un client manuellement</h3>
+  <p>Dans le tableau des sessions, clique sur le bouton <strong>DÉCO</strong> en face du client → il est immédiatement déconnecté du réseau.</p>
+
+  <div class="code"><span class="comment"># Équivalent MikroTik en ligne de commande :</span>
+<span class="cmd">/ip hotspot active</span> remove [find where mac-address=<span class="val">"XX:XX:XX:XX:XX:XX"</span>]</div>
+</div>
+
+<!-- ÉTAPE 7 -->
+<h2 id="step7">ÉTAPE 7 — Vérification finale</h2>
+<div class="step">
+  <div class="step-num gold">CHECKLIST COMPLÈTE</div>
   <ul>
     <li>☐ Hotspot actif sur l'interface correcte (bridge/ether2)</li>
     <li>☐ Fichiers <span class="path">login.html</span> et <span class="path">cyber-kim-logo.svg</span> dans <span class="path">flash/hotspot/</span></li>
-    <li>☐ Profils de durée créés (Flash, Express, Starter...)</li>
-    <li>☐ Jetons générés via l'app Cyber Kim</li>
-    <li>☐ Test depuis un téléphone : se connecter au WiFi "CYBER KIM"</li>
-    <li>☐ Le portail s'ouvre automatiquement dans le navigateur</li>
+    <li>☐ 10 profils de durée créés (Flash → Ultra)</li>
+    <li>☐ Jetons générés via l'app → onglet Générateur</li>
+    <li>☐ Script MikroTik importé → onglet MikroTik → copier-coller dans terminal</li>
+    <li>☐ Test depuis un téléphone : connecte-toi au WiFi "CYBER KIM"</li>
+    <li>☐ Le portail Cyber Kim s'ouvre automatiquement dans le navigateur</li>
     <li>☐ Entrer un code jeton → connexion réussie</li>
+    <li>☐ Service API REST activé sur port 80</li>
+    <li>☐ Utilisateur "dashboard" créé sur MikroTik</li>
+    <li>☐ Onglet 🔴 Live connecté et affiche les sessions en temps réel</li>
   </ul>
-
-  <div class="warn">⚠️ Si le portail ne s'affiche pas, assure-toi que le DNS est bien configuré sur 192.168.17.1 dans les paramètres Hotspot.</div>
+  <div class="warn">⚠️ Si le portail ne s'affiche pas : vérifie que le DNS est configuré sur <span class="path">192.168.17.1</span> dans les paramètres Hotspot.</div>
 </div>
 
-<h2>DÉPANNAGE</h2>
+<!-- ÉTAPE 8 -->
+<h2 id="step8">ÉTAPE 8 — Dépannage</h2>
 <div class="step">
   <div class="step-num">PROBLÈMES FRÉQUENTS</div>
+
+  <h3>Hotspot & Portail</h3>
   <div class="code"><span class="comment"># Vérifier que le hotspot tourne :</span>
 <span class="cmd">/ip hotspot</span> print
 
@@ -130,6 +270,38 @@ bye</div>
 <span class="comment"># Redémarrer le hotspot :</span>
 <span class="cmd">/ip hotspot</span> disable [find]
 <span class="cmd">/ip hotspot</span> enable [find]</div>
+
+  <h3>API REST & Dashboard Live</h3>
+  <div class="code"><span class="comment"># Vérifier que le service web est actif :</span>
+<span class="cmd">/ip service</span> print
+
+<span class="comment"># Tester l'API depuis le terminal MikroTik :</span>
+<span class="cmd">/ip hotspot active</span> print detail
+
+<span class="comment"># Lister les utilisateurs dashboard :</span>
+<span class="cmd">/user</span> print where name=<span class="val">dashboard</span>
+
+<span class="comment"># Réinitialiser le mot de passe dashboard :</span>
+<span class="cmd">/user</span> set dashboard password=<span class="val">NouveauMotDePasse</span></div>
+
+  <h3>Erreur CORS dans le navigateur</h3>
+  <ul>
+    <li>Utilise <strong>Firefox</strong> plutôt que Chrome</li>
+    <li>Ouvre l'app depuis <span class="path">file:///C:/chemin/cyber-kim-jetons.html</span></li>
+    <li>Désactive temporairement l'extension de sécurité du navigateur</li>
+    <li>Ou installe l'extension <strong>"CORS Unblock"</strong> sur Firefox</li>
+  </ul>
+
+  <h3>Jeton refusé par MikroTik</h3>
+  <div class="code"><span class="comment"># Vérifier qu'un jeton existe bien :</span>
+<span class="cmd">/ip hotspot user</span> print where name~<span class="val">"A3X9K2"</span>
+
+<span class="comment"># Ajouter manuellement un jeton de test :</span>
+<span class="cmd">/ip hotspot user</span> add name=<span class="val">TEST01</span> password=<span class="val">TEST01</span> profile=<span class="val">Flash</span></div>
+</div>
+
+<div style="margin-top:3rem;padding:1rem;text-align:center;color:var(--muted);font-size:0.72rem;letter-spacing:2px;border-top:1px solid var(--border);">
+  CYBER KIM © 2025 — Guide v2.0 — MikroTik HAP AC2 + Portail Captif + Dashboard Live
 </div>
 
 </body>
